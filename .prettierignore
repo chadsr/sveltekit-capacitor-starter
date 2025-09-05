@@ -1,0 +1,17 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+.github/
+
+src/lib/paraglide
+ios/DerivedData
+ios/capacitor-cordova-ios-plugins
+ios/App/output
+ios/App/Pods
+ios/App/App/public
+android/build
+android/capacitor-cordova-android-plugins
+android/app/build
+android/app/src/main/assets
