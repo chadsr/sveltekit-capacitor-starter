@@ -99,7 +99,7 @@
         "@capacitor/preferences": "^7.0.2",
         "@capacitor/splash-screen": "^7.0.2",
         "@sentry/capacitor": "^2.2.0",
-        "@sentry/sveltekit": "9.38.0",
+        "@sentry/sveltekit": "10.10.0",
         "zod": "^4.1.5"
     }
 }
