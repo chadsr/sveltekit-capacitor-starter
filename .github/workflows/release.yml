@@ -1,0 +1,40 @@
+name: Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+jobs:
+  android:
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+    name: Debug APK
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: ".node_version"
+      - name: Install Dependencies
+        run: npm ci
+      - uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version-file: ".java-version"
+          cache: "gradle"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build Debug APK
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+        run: |
+          npm run build:android-debug
+      - name: Rename Debug APK
+        run: |
+          mv android/app/build/outputs/apk/debug/app-debug.apk ./app-${{ github.event.release.tag_name }}.apk
+      - name: Publish Debug APK
+        id: release
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          files: app-${{ github.event.release.tag_name }}.apk

@@ -1,0 +1,36 @@
+name: Android
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "android/**"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: ".node_version"
+      - name: Install Dependencies
+        run: npm ci
+      - uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version-file: ".java-version"
+          cache: "gradle"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: npm run build:android-debug
+      - name: Capacitor Doctor
+        run: npx cap doctor android
+      - name: Lint
+        run: npm run lint:android
+      - name: Test
+        run: npm run test:android

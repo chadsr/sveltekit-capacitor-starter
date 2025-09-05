@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/playwright:v1.55.0
+
+ARG TEST_USER="pwuser"
+ARG TEST_GROUP="pwuser"
+ARG TESTS_DIR="/tests"
+
+RUN apt-get update && apt-get install -y build-essential curl git libvips
+RUN mkdir ${TESTS_DIR} && chown -R ${TEST_USER}:${TEST_GROUP} ${TESTS_DIR}
+
+USER ${TEST_USER}
+WORKDIR ${TESTS_DIR}
+COPY --chown=${TEST_USER}:${TEST_GROUP} . .
+
+RUN npm install
+
+USER root
+RUN npm run playwright-deps
+USER ${TEST_USER}
+
+CMD [ "npm", "run", "test" ]

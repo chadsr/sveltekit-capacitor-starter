@@ -1,0 +1,87 @@
+name: Release Drafter
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  versions:
+    name: Update Releases
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # for release-drafter/release-drafter to create a github release
+      pull-requests: write  # for release-drafter/release-drafter to add label to PR
+    env:
+      VERSION_CHANGED: false
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: ".node_version"
+
+      - name: Draft Release
+        id: release
+        # Drafts your next Release notes as Pull Requests are merged into "main"
+        uses: release-drafter/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for version change
+        run: |
+          CURRENT_VERSION=$(npm pkg get version)
+          CURRENT_VERSION="${CURRENT_VERSION%\"}"
+          CURRENT_VERSION="${CURRENT_VERSION#\"}"
+          NEW_VERSION="${{ steps.release.outputs.resolved_version }}"
+          echo "Current Version: $CURRENT_VERSION"
+          echo "New Version: $NEW_VERSION"
+          V_CHANGED=false [ "$CURRENT_VERSION" != "$NEW_VERSION" ] && V_CHANGED=true
+          echo "VERSION_CHANGED=$V_CHANGED" >> $GITHUB_ENV
+          echo "Version Changed: $V_CHANGED"
+
+      - name: Update package.json version
+        if: env.VERSION_CHANGED == 'true'
+        id: package-version
+        run: |
+          echo "Next Version: ${{ steps.release.outputs.resolved_version }}"
+          npm version --git-tag-version=false --allow-same-version=true ${{ steps.release.outputs.resolved_version }}
+
+      - name: Update Android Version
+        if: env.VERSION_CHANGED == 'true'
+        uses: chkfung/android-version-actions@v1.2.3
+        with:
+          gradlePath: ./android/app/build.gradle
+          versionCode: ${{github.run_number}}
+          versionName: ${{ steps.release.outputs.resolved_version }}
+
+      - name: Update IOS Info.plist versions
+        if: env.VERSION_CHANGED == 'true'
+        id: ios-version
+        uses: damienaicheh/update-ios-version-info-plist-action@v1.2.0
+        with:
+          info-plist-path: "./ios/App/App/Info.plist"
+          bundle-short-version-string: "${{ steps.release.outputs.resolved_version }}"
+          bundle-version: "${{ steps.release.outputs.resolved_version }}"
+
+      - name: Create Pull Request
+        if: env.VERSION_CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: "App Version ${{ steps.release.outputs.resolved_version }}"
+          body: "Update Version to ${{ steps.release.outputs.resolved_version }}"
+          commit-message: "version: ${{ steps.release.outputs.resolved_version }}"
+          branch: "version-bump/${{ steps.release.outputs.resolved_version }}"
+          labels: |-
+            version

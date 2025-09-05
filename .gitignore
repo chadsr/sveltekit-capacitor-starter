@@ -1,3 +1,12 @@
+.svelte-kit
+playwright-report
+build
+.husky
+.env
+.vscode/*
+!.vscode/extensions.json
+test-results
+
 # Logs
 logs
 *.log
