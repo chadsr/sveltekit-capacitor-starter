@@ -89,7 +89,7 @@
         "tailwind-scrollbar": "^4.0.2",
         "tailwindcss": "^4.1.13",
         "typescript": "^5.9.2",
-        "typescript-eslint": "^8.42.0",
+        "typescript-eslint": "^8.45.0",
         "vite": "^7.1.4",
         "vite-plugin-devtools-json": "^1.0.0",
         "vitest": "^3.2.4"
