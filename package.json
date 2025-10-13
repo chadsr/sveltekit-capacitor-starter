@@ -59,7 +59,7 @@
         "@capacitor/core": "^7.4.3",
         "@capacitor/ios": "^7.4.3",
         "@eslint/compat": "^1.4.0",
-        "@inlang/paraglide-js": "^2.2.0",
+        "@inlang/paraglide-js": "^2.4.0",
         "@playwright/test": "^1.55.0",
         "@sveltejs/adapter-static": "^3.0.9",
         "@sveltejs/kit": "^2.37.0",
