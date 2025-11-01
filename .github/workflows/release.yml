@@ -35,6 +35,6 @@ jobs:
           mv android/app/build/outputs/apk/debug/app-debug.apk ./app-${{ github.event.release.tag_name }}.apk
       - name: Publish Debug APK
         id: release
-        uses: softprops/action-gh-release@v2.3.3
+        uses: softprops/action-gh-release@v2.4.1
         with:
           files: app-${{ github.event.release.tag_name }}.apk
