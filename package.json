@@ -100,6 +100,6 @@
         "@capacitor/splash-screen": "^7.0.2",
         "@sentry/capacitor": "^2.2.0",
         "@sentry/sveltekit": "9.38.0",
-        "zod": "^4.1.11"
+        "zod": "^4.1.12"
     }
 }
