@@ -95,7 +95,7 @@
         "vitest": "^3.2.4"
     },
     "dependencies": {
-        "@capacitor/app": "^7.0.2",
+        "@capacitor/app": "^7.1.0",
         "@capacitor/preferences": "^7.0.2",
         "@capacitor/splash-screen": "^7.0.2",
         "@sentry/capacitor": "^2.2.0",
