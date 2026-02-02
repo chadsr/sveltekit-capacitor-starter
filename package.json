@@ -55,7 +55,7 @@
     "devDependencies": {
         "@capacitor/android": "^7.4.3",
         "@capacitor/assets": "^3.0.5",
-        "@capacitor/cli": "^7.4.3",
+        "@capacitor/cli": "^7.4.4",
         "@capacitor/core": "^7.4.3",
         "@capacitor/ios": "^7.4.3",
         "@eslint/compat": "^1.4.0",
