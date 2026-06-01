@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.58.1
+FROM mcr.microsoft.com/playwright:v1.60.0
 
 ARG TEST_USER="pwuser"
 ARG TEST_GROUP="pwuser"
