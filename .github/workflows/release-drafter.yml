@@ -6,15 +6,14 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   versions:
     name: Update Releases
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # for release-drafter/release-drafter to create a github release
-      pull-requests: write  # for release-drafter/release-drafter to add label to PR
+      contents: write # for release-drafter/release-drafter to create a github release
+      pull-requests: write # for release-drafter/release-drafter to add label to PR
     env:
       VERSION_CHANGED: false
 
@@ -30,13 +29,13 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          cache: "npm"
-          node-version-file: ".node_version"
+          cache: 'npm'
+          node-version-file: '.node_version'
 
       - name: Draft Release
         id: release
         # Drafts your next Release notes as Pull Requests are merged into "main"
-        uses: release-drafter/release-drafter@v6
+        uses: release-drafter/release-drafter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,22 +66,19 @@ jobs:
           versionCode: ${{github.run_number}}
           versionName: ${{ steps.release.outputs.resolved_version }}
 
-      # - name: Update IOS Info.plist versions
-      #   if: env.VERSION_CHANGED == 'true'
-      #   id: ios-version
-      #   uses: damienaicheh/update-ios-version-info-plist-action@v1.2.0
-      #   with:
-      #     info-plist-path: "./ios/App/App/Info.plist"
-      #     bundle-short-version-string: "${{ steps.release.outputs.resolved_version }}"
-      #     bundle-version: "${{ steps.release.outputs.resolved_version }}"
+      - name: Update IOS MARKETING_VERSION
+        if: env.VERSION_CHANGED == 'true'
+        run: |
+          PROJECT_FILE="${{ github.workspace }}/ios/App/App.xcodeproj/project.pbxproj"
+          sed -i "s/MARKETING_VERSION = [0-9]*\.[0-9]*\.[0-9]*;/MARKETING_VERSION = ${{ steps.release.outputs.resolved_version }};/g" "$PROJECT_FILE"
 
       - name: Create Pull Request
         if: env.VERSION_CHANGED == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "App Version ${{ steps.release.outputs.resolved_version }}"
-          body: "Update Version to ${{ steps.release.outputs.resolved_version }}"
-          commit-message: "version: ${{ steps.release.outputs.resolved_version }}"
-          branch: "version-bump/${{ steps.release.outputs.resolved_version }}"
+          title: 'App Version ${{ steps.release.outputs.resolved_version }}'
+          body: 'Update Version to ${{ steps.release.outputs.resolved_version }}'
+          commit-message: 'version: ${{ steps.release.outputs.resolved_version }}'
+          branch: 'version-bump/${{ steps.release.outputs.resolved_version }}'
           labels: |-
             version
